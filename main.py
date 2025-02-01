@@ -89,12 +89,12 @@ def init_db():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS grades (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
+            name TEXT NOT NULL,
             kcmc TEXT NOT NULL,
             xf TEXT NOT NULL,
             jd TEXT NOT NULL,
             bfzcj TEXT NOT NULL,
-            UNIQUE(username, kcmc)
+            UNIQUE(name, kcmc)
         )
     ''')
     conn.commit()
