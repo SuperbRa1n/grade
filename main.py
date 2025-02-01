@@ -114,18 +114,18 @@ def store_grades(users_info):
             bfzcj = grade.get('bfzcj', '')
             name = grade.get('xm', '')
             
-            cursor.execute("SELECT * FROM grades WHERE username=? AND kcmc=?", (username, kcmc))
+            cursor.execute("SELECT bfzcj FROM grades WHERE username=? AND kcmc=?", (username, kcmc))
             existing_entry = cursor.fetchone()
             
             if existing_entry is None:
                 cursor.execute("INSERT INTO grades (username, kcmc, xf, jd, bfzcj) VALUES (?, ?, ?, ?, ?)", 
-                               (name, kcmc, xf, jd, bfzcj))
+                               (username, kcmc, xf, jd, bfzcj))
                 updated_entries.append((name, kcmc, xf, jd, bfzcj))
             else:
-                existing_bfzcj = existing_entry[5]
+                existing_bfzcj = existing_entry[0]
                 if existing_bfzcj != bfzcj:
                     cursor.execute("UPDATE grades SET xf=?, jd=?, bfzcj=? WHERE username=? AND kcmc=?", 
-                                   (xf, jd, bfzcj, name, kcmc))
+                                   (xf, jd, bfzcj, username, kcmc))
                     updated_entries.append((name, kcmc, xf, jd, bfzcj))
     
     conn.commit()
@@ -149,6 +149,7 @@ def main():
     thread.daemon = True
     thread.start()
     print("后台线程已启动，定期检查成绩更新")
+    
     while True:
         time.sleep(3600)  # 主线程保持运行
 
