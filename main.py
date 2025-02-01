@@ -112,20 +112,23 @@ def store_grades(users_info):
             xf = grade.get('xf', '')
             jd = grade.get('jd', '')
             bfzcj = grade.get('bfzcj', '')
-            name = grade.get('xm', '')
+            name = grade.get('xm', '')  # 这里存储 name 而不是 username
             
-            cursor.execute("SELECT bfzcj FROM grades WHERE username=? AND kcmc=?", (username, kcmc))
+            # 查询是否已存在该学生的该科目成绩
+            cursor.execute("SELECT bfzcj FROM grades WHERE name=? AND kcmc=?", (name, kcmc))
             existing_entry = cursor.fetchone()
             
             if existing_entry is None:
-                cursor.execute("INSERT INTO grades (username, kcmc, xf, jd, bfzcj) VALUES (?, ?, ?, ?, ?)", 
-                               (username, kcmc, xf, jd, bfzcj))
+                # 插入新的成绩记录
+                cursor.execute("INSERT INTO grades (name, kcmc, xf, jd, bfzcj) VALUES (?, ?, ?, ?, ?)", 
+                               (name, kcmc, xf, jd, bfzcj))
                 updated_entries.append((name, kcmc, xf, jd, bfzcj))
             else:
                 existing_bfzcj = existing_entry[0]
                 if existing_bfzcj != bfzcj:
-                    cursor.execute("UPDATE grades SET xf=?, jd=?, bfzcj=? WHERE username=? AND kcmc=?", 
-                                   (xf, jd, bfzcj, username, kcmc))
+                    # 更新已有的成绩
+                    cursor.execute("UPDATE grades SET xf=?, jd=?, bfzcj=? WHERE name=? AND kcmc=?", 
+                                   (xf, jd, bfzcj, name, kcmc))
                     updated_entries.append((name, kcmc, xf, jd, bfzcj))
     
     conn.commit()
@@ -149,7 +152,6 @@ def main():
     thread.daemon = True
     thread.start()
     print("后台线程已启动，定期检查成绩更新")
-    
     while True:
         time.sleep(3600)  # 主线程保持运行
 
