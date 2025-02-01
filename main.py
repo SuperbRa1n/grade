@@ -141,7 +141,7 @@ def check_and_update():
             name, kcmc, xf, jd, bfzcj = entry
             send_message(kcmc, name, xf, jd, bfzcj)
         
-        time.sleep(1800)  # 30分钟检查一次
+        time.sleep(300)  # 5分钟检查一次
 
 def main():
     init_db()
